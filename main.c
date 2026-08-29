@@ -93,9 +93,85 @@ int main() {
 
                 break;
             case 2:
+
+                if (quantidadeSessoes == 0)
+                {
+                    printf("\nNenhuma sessão cadastrada.\n\n");
+                    break;
+                }
+
+                printf("\n");
+                titulo("LISTAR SESSÕES DE RECARGA");
+                printf("\n");
+
+                for (int i = 0; i < quantidadeSessoes; i++)
+                {
+                    printf("\n");
+                    printf("Sessão: %d\n", sessoes[i].id);
+                    printf("Carga inicial: %.2f%%\n",
+                           sessoes[i].bateria_inicial);
+                    printf("Carga final: %.2f%%\n",
+                           sessoes[i].bateria_final);
+                    printf("Energia adicionada: %.2f kWh\n",
+                           sessoes[i].energia);
+                    printf("Custo: R$ %.2f\n",
+                           sessoes[i].custo);
+                    printf("Tempo estimado: %.0f minutos\n",
+                           sessoes[i].tempo);
+                    printf("----------------------------------------\n");
+                }
+
+                printf("\n");
+
                 break;
 
             case 3:
+
+                if (quantidadeSessoes == 0)
+                {
+                    printf("\nNenhuma sessão cadastrada.\n\n");
+                    break;
+                }
+
+                int idBusca;
+                int encontrada = 0;
+
+                printf("\n--- BUSCAR SESSÃO ---\n");
+                printf("Digite o ID da sessão: ");
+                scanf("%d", &idBusca);
+
+                for (int i = 0; i < quantidadeSessoes; i++)
+                {
+                    if (sessoes[i].id == idBusca)
+                    {
+                        printf("\n");
+                        printf("=============================================\n");
+                        printf("             RELATÓRIO DA SESSÃO\n");
+                        printf("=============================================\n");
+                        printf("Sessão: %d\n",
+                               sessoes[i].id);
+                        printf("Carga inicial: %.2f%%\n",
+                               sessoes[i].bateria_inicial);
+                        printf("Carga final: %.2f%%\n",
+                               sessoes[i].bateria_final);
+                        printf("Energia adicionada: %.2f kWh\n",
+                               sessoes[i].energia);
+                        printf("Preço da recarga: R$ %.2f\n",
+                               sessoes[i].custo);
+                        printf("Tempo estimado: %.0f minutos\n",
+                               sessoes[i].tempo);
+                        printf("=============================================\n");
+
+                        encontrada = 1;
+                        break;
+                    }
+                }
+
+                if (encontrada == 0)
+                {
+                    printf("\nSessão não encontrada.\n\n");
+                }
+
                 break;
 
             case 4:
