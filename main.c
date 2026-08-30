@@ -21,6 +21,8 @@ int capacidade_bateria_invalida(int capacidade_bateria);
 float calcular_tempo_recarga(float energia_necessaria);
 float calcular_valor_total(float energia_necessaria);
 int nao_ha_sessoes_cadastradas(int quantidadeSessoes);
+void listar_sessoes(Sessao *sessoes, int quantidadeSessoes);
+void buscar_sessao_por_id(int idBusca, Sessao *sessoes, int quantidadeSessoes);
 void sair_programa();
 
 int main() {
@@ -105,22 +107,7 @@ int main() {
                 titulo("LISTAR SESSÕES DE RECARGA");
                 printf("\n");
 
-                for (int i = 0; i < quantidadeSessoes; i++)
-                {
-                    printf("\n");
-                    printf("Sessão: %d\n", sessoes[i].id);
-                    printf("Carga inicial: %.2f%%\n",
-                           sessoes[i].bateria_inicial);
-                    printf("Carga final: %.2f%%\n",
-                           sessoes[i].bateria_final);
-                    printf("Energia adicionada: %.2f kWh\n",
-                           sessoes[i].energia);
-                    printf("Custo: R$ %.2f\n",
-                           sessoes[i].custo);
-                    printf("Tempo estimado: %.0f minutos\n",
-                           sessoes[i].tempo);
-                    printf("----------------------------------------\n");
-                }
+                listar_sessoes(sessoes, quantidadeSessoes);
 
                 printf("\n");
 
@@ -143,37 +130,7 @@ int main() {
                 printf("Digite o ID da sessão: ");
                 scanf("%d", &idBusca);
 
-                for (int i = 0; i < quantidadeSessoes; i++)
-                {
-                    if (sessoes[i].id == idBusca)
-                    {
-                        printf("\n");
-                        printf("=============================================\n");
-                        printf("             RELATÓRIO DA SESSÃO\n");
-                        printf("=============================================\n");
-                        printf("Sessão: %d\n",
-                               sessoes[i].id);
-                        printf("Carga inicial: %.2f%%\n",
-                               sessoes[i].bateria_inicial);
-                        printf("Carga final: %.2f%%\n",
-                               sessoes[i].bateria_final);
-                        printf("Energia adicionada: %.2f kWh\n",
-                               sessoes[i].energia);
-                        printf("Preço da recarga: R$ %.2f\n",
-                               sessoes[i].custo);
-                        printf("Tempo estimado: %.0f minutos\n",
-                               sessoes[i].tempo);
-                        printf("=============================================\n");
-
-                        encontrada = 1;
-                        break;
-                    }
-                }
-
-                if (encontrada == 0)
-                {
-                    printf("\nSessão não encontrada.\n\n");
-                }
+                buscar_sessao_por_id(idBusca, sessoes, quantidadeSessoes);
 
                 menu_inicial();
 
@@ -254,6 +211,60 @@ float calcular_valor_total(float energia_necessaria) {
 
 int nao_ha_sessoes_cadastradas(int quantidadeSessoes) {
     return quantidadeSessoes == 0;
+}
+
+void listar_sessoes(Sessao *sessoes, int quantidadeSessoes) {
+    for (int i = 0; i < quantidadeSessoes; i++)
+    {
+        printf("\n");
+        printf("Sessão: %d\n", sessoes[i].id);
+        printf("Carga inicial: %.2f%%\n",
+            sessoes[i].bateria_inicial);
+        printf("Carga final: %.2f%%\n",
+            sessoes[i].bateria_final);
+        printf("Energia adicionada: %.2f kWh\n",
+            sessoes[i].energia);
+        printf("Custo: R$ %.2f\n",
+            sessoes[i].custo);
+        printf("Tempo estimado: %.0f minutos\n",
+            sessoes[i].tempo);
+        printf("----------------------------------------\n");
+    }
+}
+
+void buscar_sessao_por_id(int idBusca, Sessao *sessoes, int quantidadeSessoes) {
+    int encontrada = 0;
+
+    for (int i = 0; i < quantidadeSessoes; i++)
+    {
+        if (sessoes[i].id == idBusca)
+        {
+            printf("\n");
+            printf("=============================================\n");
+            printf("             RELATÓRIO DA SESSÃO\n");
+            printf("=============================================\n");
+            printf("Sessão: %d\n",
+                sessoes[i].id);
+            printf("Carga inicial: %.2f%%\n",
+                sessoes[i].bateria_inicial);
+            printf("Carga final: %.2f%%\n",
+                sessoes[i].bateria_final);
+            printf("Energia adicionada: %.2f kWh\n",
+                sessoes[i].energia);
+            printf("Preço da recarga: R$ %.2f\n",
+                sessoes[i].custo);
+            printf("Tempo estimado: %.0f minutos\n",
+                sessoes[i].tempo);
+            printf("=============================================\n");
+
+            encontrada = 1;
+            break;
+        }
+    }
+
+    if (encontrada == 0) {
+        printf("\nSessão não encontrada.\n\n");
+    }
 }
 
 void sair_programa() {
