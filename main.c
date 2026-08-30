@@ -91,6 +91,8 @@ int main() {
 
                 printf("\nSessão cadastrada com sucesso!\n\n");
 
+                menu_inicial();
+
                 break;
             case 2:
 
@@ -122,6 +124,8 @@ int main() {
                 }
 
                 printf("\n");
+
+                menu_inicial();
 
                 break;
 
@@ -171,6 +175,8 @@ int main() {
                 {
                     printf("\nSessão não encontrada.\n\n");
                 }
+
+                menu_inicial();
 
                 break;
 
