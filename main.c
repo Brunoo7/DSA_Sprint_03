@@ -18,8 +18,9 @@ void menu_inicial();
 float conversao_para_kwh(float bateria_inicial, float capacidade_bateria);
 int porcentagem_invalida(Sessao *sessoes, int quantidadeSessoes);
 int capacidade_bateria_invalida(int capacidade_bateria);
+int horario_invalido(int horario_sessao);
 float calcular_tempo_recarga(float energia_necessaria);
-float calcular_valor_total(float energia_necessaria);
+float calcular_valor_total(float energia_necessaria, int horario_sessao);
 int nao_ha_sessoes_cadastradas(int quantidadeSessoes);
 void listar_sessoes(Sessao *sessoes, int quantidadeSessoes);
 void buscar_sessao_por_id(int idBusca, Sessao *sessoes, int quantidadeSessoes);
@@ -70,6 +71,15 @@ int main() {
                     break;
                 }
 
+                printf("Digite o horário da sessão (0h-23h): ");
+                scanf("%d", &sessoes[quantidadeSessoes].horario_sessao);
+
+                if (horario_invalido(sessoes[quantidadeSessoes].horario_sessao)) 
+                {
+                    printf("\nHorário inválido!\n\n");
+                    break;
+                }
+
                 energia_necessaria =
                     capacidade_bateria -
                     conversao_para_kwh(
@@ -84,7 +94,7 @@ int main() {
                     calcular_tempo_recarga(energia_necessaria);
 
                 sessoes[quantidadeSessoes].custo =
-                    calcular_valor_total(energia_necessaria);
+                    calcular_valor_total(energia_necessaria, sessoes[quantidadeSessoes].horario_sessao);
 
                 sessoes[quantidadeSessoes].bateria_final = 100;
 
@@ -196,6 +206,10 @@ int capacidade_bateria_invalida(int capacidade_bateria) {
     return capacidade_bateria <= 0;
 }
 
+int horario_invalido(int horario_sessao) {
+    return horario_sessao < 0 || horario_sessao > 24;
+}
+
 float calcular_tempo_recarga(float energia_necessaria) {
     int potencia_carregador = 75;
     int segundos_para_minutos = 60;
@@ -203,9 +217,17 @@ float calcular_tempo_recarga(float energia_necessaria) {
     return (energia_necessaria / potencia_carregador) * segundos_para_minutos;
 }
 
-float calcular_valor_total(float energia_necessaria) {
-    float tarifa_por_kwh = 0.8;
-    
+float calcular_valor_total(float energia_necessaria, int horario_sessao) {
+    float tarifa_por_kwh;
+
+    if (horario_sessao <= 6) {
+        tarifa_por_kwh = 0.5;
+    } else if (horario_sessao < 18) {
+        tarifa_por_kwh = 0.8;
+    } else {
+        tarifa_por_kwh = 1.2;
+    }
+
     return energia_necessaria * tarifa_por_kwh;
 }
 
