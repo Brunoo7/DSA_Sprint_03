@@ -9,6 +9,7 @@ typedef struct
     float custo;
     float bateria_inicial;
     float bateria_final;
+    float tarifa_por_kwh;
     int horario_sessao;
 } Sessao;
 
@@ -20,8 +21,9 @@ int porcentagem_invalida(Sessao *sessoes, int quantidadeSessoes);
 int capacidade_bateria_invalida(int capacidade_bateria);
 int horario_invalido(int horario_sessao);
 float calcular_tempo_recarga(float energia_necessaria);
-float calcular_valor_total(float energia_necessaria, int horario_sessao);
+float calcular_valor_total(float energia_necessaria, Sessao *sessao, int quantidadeSessoes);
 int nao_ha_sessoes_cadastradas(int quantidadeSessoes);
+void relatorio_sessao(Sessao *sessao, int i);
 void listar_sessoes(Sessao *sessoes, int quantidadeSessoes);
 void buscar_sessao_por_id(int idBusca, Sessao *sessoes, int quantidadeSessoes);
 void sair_programa();
@@ -94,7 +96,7 @@ int main() {
                     calcular_tempo_recarga(energia_necessaria);
 
                 sessoes[quantidadeSessoes].custo =
-                    calcular_valor_total(energia_necessaria, sessoes[quantidadeSessoes].horario_sessao);
+                    calcular_valor_total(energia_necessaria, sessoes, quantidadeSessoes);
 
                 sessoes[quantidadeSessoes].bateria_final = 100;
 
@@ -217,8 +219,9 @@ float calcular_tempo_recarga(float energia_necessaria) {
     return (energia_necessaria / potencia_carregador) * segundos_para_minutos;
 }
 
-float calcular_valor_total(float energia_necessaria, int horario_sessao) {
+float calcular_valor_total(float energia_necessaria, Sessao *sessao, int quantidadeSessoes) {
     float tarifa_por_kwh;
+    int horario_sessao = sessao[quantidadeSessoes].horario_sessao;
 
     if (horario_sessao <= 6) {
         tarifa_por_kwh = 0.5;
@@ -228,6 +231,8 @@ float calcular_valor_total(float energia_necessaria, int horario_sessao) {
         tarifa_por_kwh = 1.2;
     }
 
+    sessao[quantidadeSessoes].tarifa_por_kwh = tarifa_por_kwh;
+
     return energia_necessaria * tarifa_por_kwh;
 }
 
@@ -235,21 +240,29 @@ int nao_ha_sessoes_cadastradas(int quantidadeSessoes) {
     return quantidadeSessoes == 0;
 }
 
+void relatorio_sessao(Sessao *sessao, int i) {
+    printf("Sessão: %d\n", sessao[i].id);
+    printf("Carga inicial: %.2f%%\n",
+        sessao[i].bateria_inicial);
+    printf("Carga final: %.2f%%\n",
+        sessao[i].bateria_final);
+    printf("Energia adicionada: %.2f kWh\n",
+        sessao[i].energia);
+    printf("Horário da sessão: %dh\n",
+        sessao[i].horario_sessao);
+    printf("Tarifa por kwh: R$%.2f\n",
+        sessao[i].tarifa_por_kwh);
+    printf("Custo: R$ %.2f\n",
+        sessao[i].custo);
+    printf("Tempo estimado: %.0f minutos\n",
+        sessao[i].tempo);
+}
+
 void listar_sessoes(Sessao *sessoes, int quantidadeSessoes) {
     for (int i = 0; i < quantidadeSessoes; i++)
     {
         printf("\n");
-        printf("Sessão: %d\n", sessoes[i].id);
-        printf("Carga inicial: %.2f%%\n",
-            sessoes[i].bateria_inicial);
-        printf("Carga final: %.2f%%\n",
-            sessoes[i].bateria_final);
-        printf("Energia adicionada: %.2f kWh\n",
-            sessoes[i].energia);
-        printf("Custo: R$ %.2f\n",
-            sessoes[i].custo);
-        printf("Tempo estimado: %.0f minutos\n",
-            sessoes[i].tempo);
+        relatorio_sessao(sessoes, i);
         printf("----------------------------------------\n");
     }
 }
@@ -265,18 +278,7 @@ void buscar_sessao_por_id(int idBusca, Sessao *sessoes, int quantidadeSessoes) {
             printf("=============================================\n");
             printf("             RELATÓRIO DA SESSÃO\n");
             printf("=============================================\n");
-            printf("Sessão: %d\n",
-                sessoes[i].id);
-            printf("Carga inicial: %.2f%%\n",
-                sessoes[i].bateria_inicial);
-            printf("Carga final: %.2f%%\n",
-                sessoes[i].bateria_final);
-            printf("Energia adicionada: %.2f kWh\n",
-                sessoes[i].energia);
-            printf("Preço da recarga: R$ %.2f\n",
-                sessoes[i].custo);
-            printf("Tempo estimado: %.0f minutos\n",
-                sessoes[i].tempo);
+            relatorio_sessao(sessoes, i);
             printf("=============================================\n");
 
             encontrada = 1;
