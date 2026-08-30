@@ -16,6 +16,8 @@ void exibir_iguais();
 void titulo(char *palavra);
 void menu_inicial();
 float conversao_para_kwh(float bateria_inicial, float capacidade_bateria);
+int porcentagem_invalida(Sessao *sessoes, int quantidadeSessoes);
+int capacidade_bateria_invalida(int capacidade_bateria);
 void sair_programa();
 
 int main() {
@@ -47,20 +49,19 @@ int main() {
                 printf("Digite a capacidade da bateria (kWh): ");
                 scanf("%f", &capacidade_bateria);
 
+                if (capacidade_bateria_invalida(capacidade_bateria))
+                {
+                    printf("\nCapacidade da bateria inválida!\n\n");
+                    break;
+                }
+
                 printf("Digite a bateria inicial (%%): ");
                 scanf("%f",
                       &sessoes[quantidadeSessoes].bateria_inicial);
 
-                if (sessoes[quantidadeSessoes].bateria_inicial < 0 ||
-                    sessoes[quantidadeSessoes].bateria_inicial > 100)
+                if (porcentagem_invalida(sessoes, quantidadeSessoes))
                 {
                     printf("\nBateria inválida!\n\n");
-                    break;
-                }
-
-                if (capacidade_bateria <= 0)
-                {
-                    printf("\nCapacidade da bateria inválida!\n\n");
                     break;
                 }
 
@@ -224,6 +225,15 @@ void menu_inicial() {
 
 float conversao_para_kwh(float bateria_inicial, float capacidade_bateria) {
     return (bateria_inicial / 100) * capacidade_bateria;
+}
+
+int porcentagem_invalida(Sessao *sessoes, int quantidadeSessoes) {
+    return sessoes[quantidadeSessoes].bateria_inicial < 0 || 
+            sessoes[quantidadeSessoes].bateria_inicial > 100;
+}
+
+int capacidade_bateria_invalida(int capacidade_bateria) {
+    return capacidade_bateria <= 0;
 }
 
 void sair_programa() {
