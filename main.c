@@ -255,7 +255,7 @@ void relatorio_sessao(Sessao *sessao, int i) {
         sessao[i].bateria_inicial);
     printf("Carga final: %.2f%%\n",
         sessao[i].bateria_final);
-    printf("Energia adicionada: %.2f kWh\n",
+    printf("Energia adicionada: %.2f kW\n",
         sessao[i].energia);
     printf("Horário da sessão: %dh\n",
         sessao[i].horario_sessao);
