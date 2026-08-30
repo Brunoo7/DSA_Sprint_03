@@ -18,6 +18,9 @@ void menu_inicial();
 float conversao_para_kwh(float bateria_inicial, float capacidade_bateria);
 int porcentagem_invalida(Sessao *sessoes, int quantidadeSessoes);
 int capacidade_bateria_invalida(int capacidade_bateria);
+float calcular_tempo_recarga(float energia_necessaria);
+float calcular_valor_total(float energia_necessaria);
+int nao_ha_sessoes_cadastradas(int quantidadeSessoes);
 void sair_programa();
 
 int main() {
@@ -76,10 +79,10 @@ int main() {
                     energia_necessaria;
 
                 sessoes[quantidadeSessoes].tempo =
-                    (energia_necessaria / 75) * 60;
+                    calcular_tempo_recarga(energia_necessaria);
 
                 sessoes[quantidadeSessoes].custo =
-                    energia_necessaria * 0.8;
+                    calcular_valor_total(energia_necessaria);
 
                 sessoes[quantidadeSessoes].bateria_final = 100;
 
@@ -92,7 +95,7 @@ int main() {
                 break;
             case 2:
 
-                if (quantidadeSessoes == 0)
+                if (nao_ha_sessoes_cadastradas(quantidadeSessoes))
                 {
                     printf("\nNenhuma sessão cadastrada.\n\n");
                     break;
@@ -127,7 +130,7 @@ int main() {
 
             case 3:
 
-                if (quantidadeSessoes == 0)
+                if (nao_ha_sessoes_cadastradas(quantidadeSessoes))
                 {
                     printf("\nNenhuma sessão cadastrada.\n\n");
                     break;
@@ -234,6 +237,23 @@ int porcentagem_invalida(Sessao *sessoes, int quantidadeSessoes) {
 
 int capacidade_bateria_invalida(int capacidade_bateria) {
     return capacidade_bateria <= 0;
+}
+
+float calcular_tempo_recarga(float energia_necessaria) {
+    int potencia_carregador = 75;
+    int segundos_para_minutos = 60;
+
+    return (energia_necessaria / potencia_carregador) * segundos_para_minutos;
+}
+
+float calcular_valor_total(float energia_necessaria) {
+    float tarifa_por_kwh = 0.8;
+    
+    return energia_necessaria * tarifa_por_kwh;
+}
+
+int nao_ha_sessoes_cadastradas(int quantidadeSessoes) {
+    return quantidadeSessoes == 0;
 }
 
 void sair_programa() {
