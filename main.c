@@ -31,6 +31,12 @@ float calcular_media_energia_necessaria(Sessao *sessao, int quantidadeSessoes);
 float calcular_media_valor_total(Sessao *sessao, int quantidadeSessoes);
 float calcular_media_bateria_inicial(Sessao *sessao, int quantidadeSessoes);
 int calcular_media_tempo_recarga(Sessao *sessao, int quantidadeSessoes);
+int todas_faixas_iguais(
+    int qtd_primeira_faixa_horario, 
+    int qtd_segunda_faixa_horario, 
+    int qtd_terceira_faixa_horario
+);
+void calcular_media_faixa_horario_sessoa(Sessao *sessao, int quantidadeSessoes);
 void sair_programa();
 
 int main() {
@@ -157,6 +163,11 @@ int main() {
                 break;
 
             case 5:
+                if (nao_ha_sessoes_cadastradas(quantidadeSessoes)) {
+                    printf("\nNenhuma sessão cadastrada para calcular as estatísticas.\n\n");
+                    break;
+                }
+
                 exibir_estatisticas(sessoes, quantidadeSessoes);
 
                 menu_inicial();
@@ -313,6 +324,11 @@ void exibir_estatisticas(Sessao *sessao, int quantidadeSessoes) {
     printf("Média de valor total: R$%.2f\n", media_valor_total);
     printf("Média de bateria inicial: %.2f%%\n", media_bateria_inicial);
     printf("Média de tempo de recarga: %d minutos\n", media_tempo_recarga);
+    printf("\n");
+    printf("FAIXA DE HORÁRIO DAS RECARGAS\n");
+    printf("--------------------------------------\n");
+    calcular_media_faixa_horario_sessoa(sessao, quantidadeSessoes);
+    printf("\n");
 }
 
 float calcular_media_energia_necessaria(Sessao *sessao,  int quantidadeSessoes) {
@@ -353,6 +369,106 @@ float calcular_media_bateria_inicial(Sessao *sessao, int quantidadeSessoes) {
     }
 
     return soma_bateria_inicial / quantidadeSessoes;
+}
+
+int todas_faixas_iguais(
+    int qtd_primeira_faixa_horario, int qtd_segunda_faixa_horario, int qtd_terceira_faixa_horario
+) {
+    return qtd_primeira_faixa_horario == qtd_segunda_faixa_horario &&
+           qtd_primeira_faixa_horario == qtd_terceira_faixa_horario &&
+           qtd_segunda_faixa_horario == qtd_terceira_faixa_horario;
+}
+
+void calcular_media_faixa_horario_sessoa(Sessao *sessao, int quantidadeSessoes) {
+    int qtd_primeira_faixa_horario = 0;
+    int qtd_segunda_faixa_horario = 0;
+    int qtd_terceira_faixa_horario = 0;
+
+    for (int i = 0; i < quantidadeSessoes; i++) {
+        if (sessao[i].horario_sessao <= 6) 
+        {
+            qtd_primeira_faixa_horario++;
+        }
+
+        else if (sessao[i].horario_sessao < 18)
+        {
+            qtd_segunda_faixa_horario++;
+        }
+        
+        else 
+        {
+            qtd_terceira_faixa_horario++;
+        }
+    }
+
+    if (qtd_primeira_faixa_horario > qtd_segunda_faixa_horario && 
+        qtd_primeira_faixa_horario > qtd_terceira_faixa_horario) 
+    {
+        printf("Faixa de hórario com mais recargas: 0h-6h | Quantidade de recargas: %d", qtd_primeira_faixa_horario);
+    }
+
+    else if (qtd_segunda_faixa_horario > qtd_primeira_faixa_horario &&
+        qtd_segunda_faixa_horario > qtd_terceira_faixa_horario)
+    {
+        printf("Faixa de hórario com mais recargas: 7h-17h | Quantidade de recargas: %d", qtd_segunda_faixa_horario);
+    }
+
+    else if (qtd_terceira_faixa_horario > qtd_primeira_faixa_horario &&
+        qtd_terceira_faixa_horario > qtd_segunda_faixa_horario)
+    {
+        printf("Faixa de hórario com mais recargas: 18h-23h | Quantidade de recargas: %d", qtd_terceira_faixa_horario);
+    }
+
+    else if 
+    (
+        todas_faixas_iguais(
+            qtd_primeira_faixa_horario, 
+            qtd_segunda_faixa_horario, 
+            qtd_terceira_faixa_horario
+        )
+    )
+    {
+        printf
+        (
+           "Todas as faixas de horário tiveram a mesma quantidade de recargas:\n"
+           "- Quantidade de recargas (0h-6h): %d\n"
+           "- Quantidade de recargas (7h-17h): %d\n"
+           "- Quantidade de recargas (18h-23h): %d\n", 
+           qtd_primeira_faixa_horario, qtd_segunda_faixa_horario, qtd_terceira_faixa_horario
+        );
+    }
+
+    else if (qtd_primeira_faixa_horario == qtd_segunda_faixa_horario) {
+        printf
+        (
+           "Duas faixas de horário tiveram a mesma quantidade de recargas:\n"
+           "- Quantidade de recargas (0h-6h): %d\n"
+           "- Quantidade de recargas (7h-17h): %d\n",
+           qtd_primeira_faixa_horario, qtd_segunda_faixa_horario
+        );
+    }
+
+    else if (qtd_primeira_faixa_horario == qtd_terceira_faixa_horario)
+    {
+        printf
+        (
+           "Duas faixas de horário tiveram a mesma quantidade de recargas:\n"
+           "- Quantidade de recargas (0h-6h): %d\n"
+           "- Quantidade de recargas (18h-23h): %d\n",
+           qtd_primeira_faixa_horario, qtd_terceira_faixa_horario
+        );
+    }
+    
+    else
+    {
+        printf
+        (
+           "Duas faixas de horário tiveram a mesma quantidade de recargas:\n"
+           "- Quantidade de recargas (7h-17h): %d\n"
+           "- Quantidade de recargas (18h-23h): %d\n",
+           qtd_segunda_faixa_horario, qtd_terceira_faixa_horario
+        );
+    }
 }
 
 void sair_programa() {
