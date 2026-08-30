@@ -1,12 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-float conversao_para_kwh(float bateria_inicial, float capacidade_bateria) {
-
-    return (bateria_inicial / 100) * capacidade_bateria;
-
-}
-
 typedef struct
 {
     int id;
@@ -21,6 +15,7 @@ typedef struct
 void exibir_iguais();
 void titulo(char *palavra);
 void menu_inicial();
+float conversao_para_kwh(float bateria_inicial, float capacidade_bateria);
 void sair_programa();
 
 int main() {
@@ -225,6 +220,10 @@ void menu_inicial() {
     printf("5 - Estatísticas\n");
     printf("6 - Encerrar\n");
     printf("\n");
+}
+
+float conversao_para_kwh(float bateria_inicial, float capacidade_bateria) {
+    return (bateria_inicial / 100) * capacidade_bateria;
 }
 
 void sair_programa() {
