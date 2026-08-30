@@ -26,6 +26,11 @@ int nao_ha_sessoes_cadastradas(int quantidadeSessoes);
 void relatorio_sessao(Sessao *sessao, int i);
 void listar_sessoes(Sessao *sessoes, int quantidadeSessoes);
 void buscar_sessao_por_id(int idBusca, Sessao *sessoes, int quantidadeSessoes);
+void exibir_estatisticas(Sessao *sessao, int quantidadeSessoes);
+float calcular_media_energia_necessaria(Sessao *sessao, int quantidadeSessoes);
+float calcular_media_valor_total(Sessao *sessao, int quantidadeSessoes);
+float calcular_media_bateria_inicial(Sessao *sessao, int quantidadeSessoes);
+int calcular_media_tempo_recarga(Sessao *sessao, int quantidadeSessoes);
 void sair_programa();
 
 int main() {
@@ -152,6 +157,10 @@ int main() {
                 break;
 
             case 5:
+                exibir_estatisticas(sessoes, quantidadeSessoes);
+
+                menu_inicial();
+
                 break;
 
             case 6:
@@ -289,6 +298,61 @@ void buscar_sessao_por_id(int idBusca, Sessao *sessoes, int quantidadeSessoes) {
     if (encontrada == 0) {
         printf("\nSessão não encontrada.\n\n");
     }
+}
+
+void exibir_estatisticas(Sessao *sessao, int quantidadeSessoes) {
+    float media_energia_necessaria = calcular_media_energia_necessaria(sessao, quantidadeSessoes);
+    float media_valor_total = calcular_media_valor_total(sessao, quantidadeSessoes);
+    float media_bateria_inicial = calcular_media_bateria_inicial(sessao, quantidadeSessoes);
+    int media_tempo_recarga = calcular_media_tempo_recarga(sessao, quantidadeSessoes);
+
+    printf("\n");
+    titulo("ESTATÍSTICAS");
+    printf("\n\n");
+    printf("Média de energia necessária: %.2f Kw\n", media_energia_necessaria);
+    printf("Média de valor total: R$%.2f\n", media_valor_total);
+    printf("Média de bateria inicial: %.2f%%\n", media_bateria_inicial);
+    printf("Média de tempo de recarga: %d minutos\n", media_tempo_recarga);
+}
+
+float calcular_media_energia_necessaria(Sessao *sessao,  int quantidadeSessoes) {
+    float soma_energia = 0;
+
+    for (int i = 0; i < quantidadeSessoes; i++) {
+        soma_energia += sessao[i].energia;
+    }
+
+    return soma_energia / quantidadeSessoes;
+}
+
+float calcular_media_valor_total(Sessao *sessao,  int quantidadeSessoes) {
+    float soma_custo = 0;
+
+    for (int i = 0; i < quantidadeSessoes; i++) {
+        soma_custo += sessao[i].custo;
+    }
+
+    return soma_custo / quantidadeSessoes;
+}
+
+int calcular_media_tempo_recarga(Sessao *sessao,  int quantidadeSessoes) {
+    int soma_tempo = 0;
+
+    for (int i = 0; i < quantidadeSessoes; i++) {
+        soma_tempo += sessao[i].tempo;
+    }
+
+    return soma_tempo / quantidadeSessoes;
+}
+
+float calcular_media_bateria_inicial(Sessao *sessao, int quantidadeSessoes) {
+    float soma_bateria_inicial = 0;
+
+    for (int i = 0; i < quantidadeSessoes; i++) {
+        soma_bateria_inicial += sessao[i].bateria_inicial;
+    }
+
+    return soma_bateria_inicial / quantidadeSessoes;
 }
 
 void sair_programa() {
