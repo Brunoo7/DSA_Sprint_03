@@ -3,6 +3,7 @@
 # Eu realizei algumas modificações em relação ao template que o site oferece
 
 ### C ###
+
 # Prerequisites
 *.d
 
@@ -27,7 +28,7 @@
 *.la
 *.lo
 
-# Shared objects (inc. Windows DLLs)
+# Shared objects
 *.dll
 *.so
 *.so.*
@@ -46,7 +47,6 @@
 *.su
 *.idb
 *.pdb
-*.json
 
 # Kernel Module Compile Results
 *.mod*
@@ -57,18 +57,28 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+
 ### VisualStudioCode ###
-.vscode/.*
 
-# Local History for Visual Studio Code
+# VS Code settings
+.vscode/
+
+# VS Code local history
 .history/
+.ionide/
 
-# Built Visual Studio Code Extensions
-*.vsix
 
-### VisualStudioCode Patch ###
-# Ignore all local history of files
-.history
-.ionide
+### Outros arquivos locais ###
 
-# End of https://www.toptal.com/developers/gitignore/api/c,visualstudiocode
+# Arquivos temporários
+*.tmp
+*.temp
+
+# Arquivos de backup
+*.bak
+*.swp
+*.swo
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
