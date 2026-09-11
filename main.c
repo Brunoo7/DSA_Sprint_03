@@ -28,10 +28,14 @@ void listar_sessoes(Sessao *sessoes, int quantidadeSessoes);
 void buscar_sessao_por_id(int idBusca, Sessao *sessoes, int quantidadeSessoes);
 void ordenar_sessoes(Sessao *sessoes, int quantidadeSessoes);
 void exibir_estatisticas(Sessao *sessao, int quantidadeSessoes);
+float calcular_energia_total(Sessao *sessao, int quantidadeSessoes);
+float calcular_faturamento_total(Sessao *sessao, int quantidadeSessoes);
+float calcular_maior_consumo(Sessao *sessao, int quantidadeSessoes);
+float calcular_menor_consumo(Sessao *sessao, int quantidadeSessoes);
 float calcular_media_energia_necessaria(Sessao *sessao, int quantidadeSessoes);
 float calcular_media_valor_total(Sessao *sessao, int quantidadeSessoes);
 float calcular_media_bateria_inicial(Sessao *sessao, int quantidadeSessoes);
-int calcular_media_tempo_recarga(Sessao *sessao, int quantidadeSessoes);
+float calcular_media_tempo_recarga(Sessao *sessao, int quantidadeSessoes);
 int todas_faixas_iguais(
     int qtd_primeira_faixa_horario,
     int qtd_segunda_faixa_horario,
@@ -60,6 +64,12 @@ int main()
         switch (opcao)
         {
             case 1:
+                if (quantidadeSessoes >= 100)
+                {
+                    printf("\nLimite máximo de 100 sessões atingido.\n\n");
+                    break;
+                }
+
                 printf("\n--- NOVA SESSÃO ---\n");
 
                 sessoes[quantidadeSessoes].id = quantidadeSessoes + 1;
@@ -316,7 +326,7 @@ void relatorio_sessao(Sessao *sessao, int i)
     printf("Carga final: %.2f%%\n",
            sessao[i].bateria_final);
 
-    printf("Energia adicionada: %.2f kW\n",
+    printf("Energia adicionada: %.2f kWh\n",
            sessao[i].energia);
 
     printf("Horário da sessão: %dh\n",
@@ -350,50 +360,60 @@ void buscar_sessao_por_id(
     int quantidadeSessoes
 )
 {
-    int encontrada = 0; 
-    // O(1) - declaração e inicialização da variável
+    int encontrada = 0;
+    // O(1): declaração e inicialização da variável.
 
-    // O(n) - no pior caso, o laço percorre todas as sessões
+    // O(n): o laço pode percorrer todas as sessões no pior caso.
     for (int i = 0; i < quantidadeSessoes; i++)
     {
-        // O(1) - acesso ao elemento do vetor e comparação do ID
+        // O(1): acesso ao elemento atual do vetor.
+        // O(1): comparação entre o ID atual e o ID procurado.
         if (sessoes[i].id == idBusca)
         {
-            printf("\n"); 
-            // O(1) - impressão na tela
+            // O(1): quebra de linha.
+            printf("\n");
 
+            // O(1): impressão do separador.
             printf("=============================================\n");
-            // O(1) - impressão na tela
 
+            // O(1): impressão do título.
             printf("             RELATÓRIO DA SESSÃO\n");
-            // O(1) - impressão na tela
 
+            // O(1): impressão do separador.
             printf("=============================================\n");
-            // O(1) - impressão na tela
 
+            // O(1): chamada da função para exibir os dados da sessão.
             relatorio_sessao(sessoes, i);
-            // O(1) - exibe os dados da sessão encontrada
 
+            // O(1): impressão do separador.
             printf("=============================================\n");
-            // O(1) - impressão na tela
 
+            // O(1): altera a variável para indicar que encontrou.
             encontrada = 1;
-            // O(1) - altera o valor da variável
 
+            // O(1): encerra o laço após encontrar a sessão.
             break;
-            // O(1) - encerra o laço imediatamente
         }
     }
 
-    // O(1) - verifica se nenhuma sessão foi encontrada
+    // O(1): comparação para verificar se a sessão não foi encontrada.
     if (encontrada == 0)
     {
+        // O(1): impressão da mensagem.
         printf("\nSessão não encontrada.\n\n");
-        // O(1) - impressão na tela
     }
-    
-    // Complexidade final:
-    // O(n), pois no pior caso todas as n sessões são verificadas.
+
+    /*
+    Complexidade:
+    Inicialização: O(1)
+    Laço de busca: O(n)
+    Operações dentro do laço: O(1)
+
+    Portanto:
+    O(1) + O(n) * O(1) = O(n)
+
+    Complexidade final da busca: O(n)
+    */
 }
 
 void ordenar_sessoes(
@@ -401,207 +421,289 @@ void ordenar_sessoes(
     int quantidadeSessoes
 )
 {
+    // O(1): declaração da variável.
     int criterio;
-    // O(1) - declaração da variável
 
+    // O(1): declaração da variável.
     int ordem;
-    // O(1) - declaração da variável
 
+    // O(1): impressão na tela.
     printf("\n--- ORDENAR SESSÕES ---\n");
-    // O(1) - impressão na tela
 
+    // O(1): impressão na tela.
     printf("1 - ID\n");
-    // O(1) - impressão na tela
 
+    // O(1): impressão na tela.
     printf("2 - Energia\n");
-    // O(1) - impressão na tela
 
+    // O(1): impressão na tela.
     printf("3 - Custo\n");
-    // O(1) - impressão na tela
 
+    // O(1): impressão na tela.
     printf("4 - Tempo\n");
-    // O(1) - impressão na tela
 
+    // O(1): impressão na tela.
     printf("5 - Bateria inicial\n");
-    // O(1) - impressão na tela
 
+    // O(1): impressão na tela.
     printf("Digite o critério: ");
-    // O(1) - impressão na tela
 
+    // O(1): leitura do critério escolhido.
     scanf("%d", &criterio);
-    // O(1) - leitura da opção escolhida
 
-    // O(1) - verifica se o critério está dentro das opções
+    // O(1): verifica se o critério é válido.
     if (criterio < 1 || criterio > 5)
     {
+        // O(1): impressão da mensagem.
         printf("\nCritério inválido!\n\n");
-        // O(1) - impressão na tela
 
+        // O(1): encerra a função.
         return;
-        // O(1) - encerra a função
     }
 
+    // O(1): impressão na tela.
     printf("\n1 - Crescente\n");
-    // O(1) - impressão na tela
 
+    // O(1): impressão na tela.
     printf("2 - Decrescente\n");
-    // O(1) - impressão na tela
 
+    // O(1): impressão na tela.
     printf("Digite a ordem: ");
-    // O(1) - impressão na tela
 
+    // O(1): leitura da ordem escolhida.
     scanf("%d", &ordem);
-    // O(1) - leitura da opção escolhida
 
-    // O(1) - verifica se a ordem é válida
+    // O(1): verifica se a ordem é válida.
     if (ordem != 1 && ordem != 2)
     {
+        // O(1): impressão da mensagem.
         printf("\nOrdem inválida!\n\n");
-        // O(1) - impressão na tela
 
+        // O(1): encerra a função.
         return;
-        // O(1) - encerra a função
     }
 
-    // O(n) - o primeiro laço percorre aproximadamente n posições
+    // O(n): o primeiro laço executa aproximadamente n vezes.
     for (int i = 0; i < quantidadeSessoes - 1; i++)
     {
-        // O(n) - para cada posição de i,
-        // o segundo laço percorre as posições restantes
+        // O(n): para cada execução do primeiro laço,
+        // o segundo laço percorre parte do vetor.
         for (int j = 0; j < quantidadeSessoes - 1 - i; j++)
         {
+            // O(1): declaração e inicialização da variável.
             int trocar = 0;
-            // O(1) - inicialização da variável
 
-            // O(1) - verifica se o critério escolhido é ID
+            // O(1): verifica o critério escolhido.
             if (criterio == 1)
             {
-                // O(1) - compara dois IDs
+                // O(1): comparação dos IDs.
                 if (ordem == 1 &&
                     sessoes[j].id > sessoes[j + 1].id)
                 {
+                    // O(1): define que haverá troca.
                     trocar = 1;
-                    // O(1) - indica que haverá troca
                 }
 
-                // O(1) - compara dois IDs
+                // O(1): comparação dos IDs.
                 else if (ordem == 2 &&
                          sessoes[j].id < sessoes[j + 1].id)
                 {
+                    // O(1): define que haverá troca.
                     trocar = 1;
-                    // O(1) - indica que haverá troca
                 }
             }
 
-            // O(1) - verifica se o critério escolhido é energia
+            // O(1): verifica o critério escolhido.
             else if (criterio == 2)
             {
-                // O(1) - compara duas energias
+                // O(1): comparação das energias.
                 if (ordem == 1 &&
                     sessoes[j].energia > sessoes[j + 1].energia)
                 {
+                    // O(1): define que haverá troca.
                     trocar = 1;
-                    // O(1) - indica que haverá troca
                 }
 
-                // O(1) - compara duas energias
+                // O(1): comparação das energias.
                 else if (ordem == 2 &&
                          sessoes[j].energia < sessoes[j + 1].energia)
                 {
+                    // O(1): define que haverá troca.
                     trocar = 1;
-                    // O(1) - indica que haverá troca
                 }
             }
 
-            // O(1) - verifica se o critério escolhido é custo
+            // O(1): verifica o critério escolhido.
             else if (criterio == 3)
             {
-                // O(1) - compara dois custos
+                // O(1): comparação dos custos.
                 if (ordem == 1 &&
                     sessoes[j].custo > sessoes[j + 1].custo)
                 {
+                    // O(1): define que haverá troca.
                     trocar = 1;
-                    // O(1) - indica que haverá troca
                 }
 
-                // O(1) - compara dois custos
+                // O(1): comparação dos custos.
                 else if (ordem == 2 &&
                          sessoes[j].custo < sessoes[j + 1].custo)
                 {
+                    // O(1): define que haverá troca.
                     trocar = 1;
-                    // O(1) - indica que haverá troca
                 }
             }
 
-            // O(1) - verifica se o critério escolhido é tempo
+            // O(1): verifica o critério escolhido.
             else if (criterio == 4)
             {
-                // O(1) - compara dois tempos
+                // O(1): comparação dos tempos.
                 if (ordem == 1 &&
                     sessoes[j].tempo > sessoes[j + 1].tempo)
                 {
+                    // O(1): define que haverá troca.
                     trocar = 1;
-                    // O(1) - indica que haverá troca
                 }
 
-                // O(1) - compara dois tempos
+                // O(1): comparação dos tempos.
                 else if (ordem == 2 &&
                          sessoes[j].tempo < sessoes[j + 1].tempo)
                 {
+                    // O(1): define que haverá troca.
                     trocar = 1;
-                    // O(1) - indica que haverá troca
                 }
             }
 
-            // O(1) - verifica se o critério escolhido é bateria inicial
+            // O(1): verifica o critério escolhido.
             else if (criterio == 5)
             {
-                // O(1) - compara duas baterias iniciais
+                // O(1): comparação das baterias iniciais.
                 if (ordem == 1 &&
                     sessoes[j].bateria_inicial >
                     sessoes[j + 1].bateria_inicial)
                 {
+                    // O(1): define que haverá troca.
                     trocar = 1;
-                    // O(1) - indica que haverá troca
                 }
 
-                // O(1) - compara duas baterias iniciais
+                // O(1): comparação das baterias iniciais.
                 else if (ordem == 2 &&
                          sessoes[j].bateria_inicial <
                          sessoes[j + 1].bateria_inicial)
                 {
+                    // O(1): define que haverá troca.
                     trocar = 1;
-                    // O(1) - indica que haverá troca
                 }
             }
 
-            // O(1) - verifica se a troca foi necessária
+            // O(1): verifica se os elementos precisam ser trocados.
             if (trocar)
             {
+                // O(1): copia uma struct para uma variável temporária.
                 Sessao temporaria = sessoes[j];
-                // O(1) - copia uma struct para uma variável temporária
 
+                // O(1): copia a próxima struct para a posição atual.
                 sessoes[j] = sessoes[j + 1];
-                // O(1) - coloca a próxima sessão na posição atual
 
+                // O(1): copia a struct temporária para a próxima posição.
                 sessoes[j + 1] = temporaria;
-                // O(1) - coloca a sessão temporária na próxima posição
             }
         }
     }
 
+    // O(1): impressão da mensagem.
     printf("\nSessões ordenadas com sucesso!\n\n");
-    // O(1) - impressão na tela
 
+    // O(n): percorre todas as sessões para exibi-las.
     listar_sessoes(sessoes, quantidadeSessoes);
-    // O(n) - percorre todas as sessões para exibi-las
 
-    // Complexidade final:
-    // O(n²), pois existem dois laços de repetição aninhados.
-    // O(n) × O(n) = O(n²).
-    //
-    // A função listar_sessoes() possui O(n), mas:
-    // O(n²) + O(n) = O(n²).
+    /*
+    Complexidade:
+
+    Primeiro for:
+    O(n)
+
+    Segundo for:
+    O(n) para cada execução do primeiro.
+
+    Operações dentro dos dois laços:
+    O(1)
+
+    Portanto:
+
+    O(n) * O(n) * O(1) = O(n²)
+
+    A chamada listar_sessoes() possui O(n), mas:
+
+    O(n²) + O(n) = O(n²)
+
+    Complexidade final da ordenação: O(n²)
+    */
+}
+
+float calcular_energia_total(
+    Sessao *sessao,
+    int quantidadeSessoes
+)
+{
+    float soma_energia = 0;
+
+    for (int i = 0; i < quantidadeSessoes; i++)
+    {
+        soma_energia += sessao[i].energia;
+    }
+
+    return soma_energia;
+}
+
+float calcular_faturamento_total(
+    Sessao *sessao,
+    int quantidadeSessoes
+)
+{
+    float soma_custo = 0;
+
+    for (int i = 0; i < quantidadeSessoes; i++)
+    {
+        soma_custo += sessao[i].custo;
+    }
+
+    return soma_custo;
+}
+
+float calcular_maior_consumo(
+    Sessao *sessao,
+    int quantidadeSessoes
+)
+{
+    float maior_consumo = sessao[0].energia;
+
+    for (int i = 1; i < quantidadeSessoes; i++)
+    {
+        if (sessao[i].energia > maior_consumo)
+        {
+            maior_consumo = sessao[i].energia;
+        }
+    }
+
+    return maior_consumo;
+}
+
+float calcular_menor_consumo(
+    Sessao *sessao,
+    int quantidadeSessoes
+)
+{
+    float menor_consumo = sessao[0].energia;
+
+    for (int i = 1; i < quantidadeSessoes; i++)
+    {
+        if (sessao[i].energia < menor_consumo)
+        {
+            menor_consumo = sessao[i].energia;
+        }
+    }
+
+    return menor_consumo;
 }
 
 void exibir_estatisticas(
@@ -609,6 +711,30 @@ void exibir_estatisticas(
     int quantidadeSessoes
 )
 {
+    float energia_total =
+        calcular_energia_total(
+            sessao,
+            quantidadeSessoes
+        );
+
+    float faturamento_total =
+        calcular_faturamento_total(
+            sessao,
+            quantidadeSessoes
+        );
+
+    float maior_consumo =
+        calcular_maior_consumo(
+            sessao,
+            quantidadeSessoes
+        );
+
+    float menor_consumo =
+        calcular_menor_consumo(
+            sessao,
+            quantidadeSessoes
+        );
+
     float media_energia_necessaria =
         calcular_media_energia_necessaria(
             sessao,
@@ -627,7 +753,7 @@ void exibir_estatisticas(
             quantidadeSessoes
         );
 
-    int media_tempo_recarga =
+    float media_tempo_recarga =
         calcular_media_tempo_recarga(
             sessao,
             quantidadeSessoes
@@ -638,13 +764,40 @@ void exibir_estatisticas(
     printf("\n\n");
 
     printf(
-        "Média de energia necessária: %.2f Kw\n",
-        media_energia_necessaria
+        "Quantidade total de sessões: %d\n",
+        quantidadeSessoes
     );
 
     printf(
-        "Média de valor total: R$%.2f\n",
+        "Energia total fornecida: %.2f kWh\n",
+        energia_total
+    );
+
+    printf(
+        "Faturamento total: R$%.2f\n",
+        faturamento_total
+    );
+
+    printf(
+        "Custo médio das sessões: R$%.2f\n",
         media_valor_total
+    );
+
+    printf(
+        "Maior consumo: %.2f kWh\n",
+        maior_consumo
+    );
+
+    printf(
+        "Menor consumo: %.2f kWh\n",
+        menor_consumo
+    );
+
+    printf("\n");
+
+    printf(
+        "Média de energia necessária: %.2f kWh\n",
+        media_energia_necessaria
     );
 
     printf(
@@ -653,7 +806,7 @@ void exibir_estatisticas(
     );
 
     printf(
-        "Média de tempo de recarga: %d minutos\n",
+        "Média de tempo de recarga: %.2f minutos\n",
         media_tempo_recarga
     );
 
@@ -699,12 +852,12 @@ float calcular_media_valor_total(
     return soma_custo / quantidadeSessoes;
 }
 
-int calcular_media_tempo_recarga(
+float calcular_media_tempo_recarga(
     Sessao *sessao,
     int quantidadeSessoes
 )
 {
-    int soma_tempo = 0;
+    float soma_tempo = 0;
 
     for (int i = 0; i < quantidadeSessoes; i++)
     {
